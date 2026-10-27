@@ -1,0 +1,32 @@
+name: ArcfoxXSH
+options:
+  bundleIdPrefix: com.zd423
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+targets:
+  ArcfoxXSH:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zd423.arcfoxxsh
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: 改数字
+        INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: 保存修改后的图片到相册需要你的允许
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: 从相册选择需要修改的截图
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Automatic
+schemes:
+  ArcfoxXSH:
+    build:
+      targets:
+        ArcfoxXSH: all
+    archive:
+      config: Release

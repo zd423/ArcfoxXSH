@@ -1,0 +1,46 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-unsigned-ipa:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build archive (unsigned)
+        run: |
+          xcodebuild archive \
+            -project ArcfoxXSH.xcodeproj \
+            -scheme ArcfoxXSH \
+            -archivePath build/ArcfoxXSH.xcarchive \
+            -destination 'generic/platform=iOS' \
+            -configuration Release \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/ArcfoxXSH.xcarchive/Products/Applications/ArcfoxXSH.app Payload/
+          zip -qry ArcfoxXSH-unsigned.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArcfoxXSH-unsigned-ipa
+          path: ArcfoxXSH-unsigned.ipa
+          retention-days: 7
