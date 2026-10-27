@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-unsigned-ipa:
     runs-on: macos-15
@@ -43,7 +46,6 @@ jobs:
           echo "::group::build.log tail"
           tail -n 60 build.log
           echo "::endgroup::"
-          # Emit at most 10 annotations (GitHub drops extras); most useful first.
           { grep -E "error:|BUILD FAILED|ARCHIVE FAILED|The following build commands failed|requires a development team|Signing for|No profiles for|fatal error" build.log | head -n 4 || true
             echo "--- last 4 lines of build.log ---"
             tail -n 4 build.log
@@ -63,3 +65,14 @@ jobs:
           name: ArcfoxXSH-unsigned-ipa
           path: ArcfoxXSH-unsigned.ipa
           retention-days: 7
+
+      - name: Publish IPA to release
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "ipa-build-${GITHUB_RUN_NUMBER}" \
+            ArcfoxXSH-unsigned.ipa \
+            --title "IPA build ${GITHUB_RUN_NUMBER}" \
+            --notes "Unsigned IPA — needs signing via AltStore/SideStore/Sideloadly or Apple ID. Built from commit ${GITHUB_SHA}." \
+            --target main
