@@ -40,10 +40,14 @@ jobs:
       - name: Show xcodebuild errors
         if: failure()
         run: |
-          echo "::group::xcodebuild tail"
-          tail -n 120 build.log
+          echo "::group::build.log tail"
+          tail -n 60 build.log
           echo "::endgroup::"
-          tail -n 120 build.log | sed 's/^/::error::/'
+          # Emit at most 10 annotations (GitHub drops extras); most useful first.
+          { grep -E "error:|BUILD FAILED|ARCHIVE FAILED|The following build commands failed|requires a development team|Signing for|No profiles for|fatal error" build.log | head -n 4 || true
+            echo "--- last 4 lines of build.log ---"
+            tail -n 4 build.log
+          } | sed 's/^/::error::/'
 
       - name: Package IPA
         if: success()
