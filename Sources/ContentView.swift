@@ -329,47 +329,47 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
                             Text("新数字").frame(width: 56, alignment: .leading)
-                            TextField("如 9999", text: binding(idx, .text))
+                            TextField("如 9999", text: binding(idx, \.text))
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.numberPad)
                         }
                         HStack {
                             Text("字号").frame(width: 56, alignment: .leading)
-                            Slider(value: binding(idx, .fontSize), in: 6...200)
+                            Slider(value: binding(idx, \.fontSize), in: 6...200)
                             Text("\(Int(patches[idx].fontSize))").frame(width: 40)
                         }
                         HStack {
                             Text("字距").frame(width: 56, alignment: .leading)
-                            Slider(value: binding(idx, .letterSpacing), in: -10...40)
+                            Slider(value: binding(idx, \.letterSpacing), in: -10...40)
                             Text("\(Int(patches[idx].letterSpacing))").frame(width: 40)
                         }
-                        Picker("粗细", selection: binding(idx, .weightIndex)) {
+                        Picker("粗细", selection: binding(idx, \.weightIndex)) {
                             ForEach(0..<5, id: \.self) { i in
                                 Text(weightNames[i]).tag(i)
                             }
                         }
                         .pickerStyle(.segmented)
-                        ColorPicker("文字颜色", selection: binding(idx, .color))
-                        ColorPicker("遮盖背景色", selection: binding(idx, .bgColor))
-                        Toggle("自动缩到框内", isOn: binding(idx, .fitWidth))
+                        ColorPicker("文字颜色", selection: binding(idx, \.color))
+                        ColorPicker("遮盖背景色", selection: binding(idx, \.bgColor))
+                        Toggle("自动缩到框内", isOn: binding(idx, \.fitWidth))
                         HStack {
                             Text("x").frame(width: 20)
-                            Slider(value: binding(idx, .rect.origin.x), in: 0...CGFloat(max(pixelW, 1)))
+                            Slider(value: binding(idx, \.rect.origin.x), in: 0...CGFloat(max(pixelW, 1)))
                             Text("\(Int(patches[idx].rect.minX))").frame(width: 44)
                         }
                         HStack {
                             Text("y").frame(width: 20)
-                            Slider(value: binding(idx, .rect.origin.y), in: 0...CGFloat(max(pixelH, 1)))
+                            Slider(value: binding(idx, \.rect.origin.y), in: 0...CGFloat(max(pixelH, 1)))
                             Text("\(Int(patches[idx].rect.minY))").frame(width: 44)
                         }
                         HStack {
                             Text("宽").frame(width: 20)
-                            Slider(value: binding(idx, .rect.size.width), in: 4...CGFloat(max(pixelW, 4)))
+                            Slider(value: binding(idx, \.rect.size.width), in: 4...CGFloat(max(pixelW, 4)))
                             Text("\(Int(patches[idx].rect.width))").frame(width: 44)
                         }
                         HStack {
                             Text("高").frame(width: 20)
-                            Slider(value: binding(idx, .rect.size.height), in: 4...CGFloat(max(pixelH, 4)))
+                            Slider(value: binding(idx, \.rect.size.height), in: 4...CGFloat(max(pixelH, 4)))
                             Text("\(Int(patches[idx].rect.height))").frame(width: 44)
                         }
                         Button(role: .destructive) {
