@@ -18,8 +18,13 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
+      - name: List schemes
+        run: xcodebuild -list -project ArcfoxXSH.xcodeproj
+
       - name: Build archive (unsigned)
+        id: build
         run: |
+          set -o pipefail
           xcodebuild archive \
             -project ArcfoxXSH.xcodeproj \
             -scheme ArcfoxXSH \
@@ -30,15 +35,25 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
-            PROVISIONING_PROFILE_SPECIFIER=""
+            PROVISIONING_PROFILE_SPECIFIER="" 2>&1 | tee build.log
+
+      - name: Show xcodebuild errors
+        if: failure()
+        run: |
+          echo "::group::xcodebuild tail"
+          tail -n 120 build.log
+          echo "::endgroup::"
+          tail -n 120 build.log | sed 's/^/::error::/'
 
       - name: Package IPA
+        if: success()
         run: |
           mkdir -p Payload
           cp -R build/ArcfoxXSH.xcarchive/Products/Applications/ArcfoxXSH.app Payload/
           zip -qry ArcfoxXSH-unsigned.ipa Payload
 
       - name: Upload IPA artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: ArcfoxXSH-unsigned-ipa
